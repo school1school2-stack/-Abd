@@ -1398,4 +1398,21 @@
                 } else {
                     addQuestion();
                 }
+            } 
+        }
+
+        function clearAll() {
+            if(confirm("هل أنت متأكد من مسح جميع الأسئلة؟")) {
+                document.getElementById('quiz-content').innerHTML .innerHTML = '';
+                document.getElementById('quiz-content').innerHTML = '';
+                document.getElementById('arrayInputText').value = '';
+                localStorage.removeItem('fifi_final_v_secured');
+                currentOpenModelName = null;
+                document.getElementById('current-model-label').innerText = "📁 نموذج جديد";
             }
+        }
+
+        window.onload = function() { loadQuestions(); };
+    </script>
+</body>
+</html>
