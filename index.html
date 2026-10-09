@@ -430,6 +430,26 @@
             return ansVal;
         }
 
+        function getColoredMatchingHtml(studentAns, correctAns) {
+            let studentArr = [];
+            if (typeof studentAns === 'object' && studentAns !== null) {
+                let keys = Object.keys(studentAns).sort((a,b)=>a-b);
+                keys.forEach(k => studentArr.push(studentAns[k] || ''));
+            } else if (typeof studentAns === 'string') {
+                studentArr = studentAns.trim().split(/\s+/);
+            }
+            let correctArr = (correctAns || '').trim().split(/\s+/);
+            
+            let htmlParts = [];
+            for (let i = 0; i < studentArr.length; i++) {
+                let sVal = studentArr[i] || '';
+                let cVal = correctArr[i] || '';
+                let color = (sVal !== '' && sVal === cVal) ? 'var(--success-green)' : 'var(--q-red)';
+                htmlParts.push(`<span style="color: ${color}; font-weight: bold;">${sVal || '--'}</span>`);
+            }
+            return htmlParts.join(' ');
+        }
+
         function startNewModel() {
             if(confirm("هل ترغب في البدء بنموذج جديد؟ سيتم تفريغ الأسئلة الحالية.")) {
                 document.getElementById('quiz-content').innerHTML = '';
@@ -908,21 +928,27 @@
             report.innerHTML = "";
 
             answersArray.forEach((ans, i) => {
-                let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                 let earned = ans.earnedScore !== undefined ? ans.earnedScore : (ans.gotScore !== undefined ? ans.gotScore : (ans.isCorrect ? ans.maxScore : 0));
                 
+                let studentAnswerHtml = '';
                 let correctDisplay = ans.correctAns || 'إجابة تحريرية';
-                if (ans.qType?.includes('مزاوجة')) correctDisplay = ans.correctAns.replace(/\s+/g, ' ').trim();
 
-                let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
-                let isMatchCorrect = (cleanFormattedAns === correctDisplay);
-                let ansColorStyle = isMatchCorrect ? "color: var(--success-green); font-weight: bold;" : "color: var(--q-red); font-weight: bold;";
+                if (ans.qType?.includes('مزاوجة')) {
+                    correctDisplay = ans.correctAns ? ans.correctAns.replace(/\s+/g, ' ').trim() : '';
+                    studentAnswerHtml = getColoredMatchingHtml(ans.studentAns, ans.correctAns);
+                } else {
+                    let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
+                    let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
+                    let isMatchCorrect = (cleanFormattedAns === correctDisplay);
+                    let ansColorStyle = isMatchCorrect ? "color: var(--success-green); font-weight: bold;" : "color: var(--q-red); font-weight: bold;";
+                    studentAnswerHtml = `<span style="${ansColorStyle}">${formattedAns}</span>`;
+                }
 
                 report.innerHTML += `<tr>
                     <td>${i+1}</td>
                     <td style="text-align:right">${ans.qText || ans.q || ''}</td>
                     <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${ans.qType || 'سؤال'}</span></td>
-                    <td style="${ansColorStyle} direction:ltr;">${formattedAns}</td>
+                    <td style="direction:ltr;">${studentAnswerHtml}</td>
                     <td style="color:var(--success-green); font-weight:bold; direction:ltr;">${correctDisplay}</td>
                     <td>${earned} من ${ans.maxScore}</td>
                 </tr>`;
@@ -945,21 +971,27 @@
             answersArray.forEach((ans, i) => {
                 const maxS = ans.maxScore || 1;
                 const earnedS = ans.earnedScore !== undefined ? ans.earnedScore : (ans.gotScore !== undefined ? ans.gotScore : (ans.isCorrect ? maxS : 0));
-                let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                 
+                let studentAnswerHtml = '';
                 let correctDisplay = ans.correctAns || 'تعديل يدوي';
-                if (ans.qType?.includes('مزاوجة')) correctDisplay = ans.correctAns.replace(/\s+/g, ' ').trim();
 
-                let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
-                let isMatchCorrect = (cleanFormattedAns === correctDisplay);
-                let ansColorStyle = isMatchCorrect ? "color: var(--success-green); font-weight: bold;" : "color: var(--q-red); font-weight: bold;";
+                if (ans.qType?.includes('مزاوجة')) {
+                    correctDisplay = ans.correctAns ? ans.correctAns.replace(/\s+/g, ' ').trim() : '';
+                    studentAnswerHtml = getColoredMatchingHtml(ans.studentAns, ans.correctAns);
+                } else {
+                    let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
+                    let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
+                    let isMatchCorrect = (cleanFormattedAns === correctDisplay);
+                    let ansColorStyle = isMatchCorrect ? "color: var(--success-green); font-weight: bold;" : "color: var(--q-red); font-weight: bold;";
+                    studentAnswerHtml = `<span style="${ansColorStyle}">${formattedAns}</span>`;
+                }
 
                 report.innerHTML += `
                     <tr>
                         <td>${i+1}</td>
                         <td style="text-align:right">${ans.qText || ans.q || ''}</td>
                         <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${ans.qType || 'سؤال'}</span></td>
-                        <td style="${ansColorStyle} direction:ltr;">${formattedAns}</td>
+                        <td style="direction:ltr;">${studentAnswerHtml}</td>
                         <td style="color:var(--success-green); font-weight:bold; direction:ltr;">${correctDisplay}</td>
                         <td>
                             <input type="number" step="0.5" min="0" max="${maxS}" class="score-edit-input" data-index="${i}" value="${earnedS}" style="width:55px; text-align:center; padding:4px; border-radius:6px; font-weight:bold; font-family:inherit;"> (من ${maxS})
