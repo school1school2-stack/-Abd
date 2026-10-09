@@ -48,7 +48,6 @@
         }
         .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-        /* تصميم القائمة المنسدلة الملونة بالأيقونات المتناسقة */
         .styled-dropdown-wrapper {
             position: relative;
             display: inline-block;
@@ -132,14 +131,11 @@
         .dropdown-menu-content button.menu-item-link { color: #06b6d4; }
         .dropdown-menu-content button.menu-item-rename { color: #f59e0b; }
         .dropdown-menu-content button.menu-item-del { color: #ef4444; }
-        .dropdown-menu-content button.menu-item-load { color: #818cf8; }
-        .dropdown-menu-content button.menu-item-add { color: #3b82f6; }
 
         .styled-dropdown-wrapper.active .dropdown-menu-content {
             display: block;
         }
 
-        /* تحسين مظهر الأيقونات داخل الأزرار العادية الأخرى */
         .btn i {
             font-size: 1.15rem;
             margin-left: 4px;
@@ -201,6 +197,16 @@
         .matching-row input[type="number"], .enum-row input[type="number"] { width: 50px; text-align: center; padding: 6px; border: 1px solid #10b981; border-radius: 6px; font-weight: bold; color: #166534; }
         .enum-row input[type="text"] { flex: 1; min-width: 150px; }
 
+        .matching-error-msg {
+            width: 100%;
+            color: var(--q-red);
+            font-size: 0.82rem;
+            font-weight: bold;
+            margin-top: -4px;
+            margin-bottom: 6px;
+            display: none;
+        }
+
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 600px) { .options-grid { display: flex; flex-direction: column; } }
 
@@ -254,7 +260,6 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
 
-    <!-- نافذة سجل النتائج -->
     <div id="history-modal">
         <h2 style="text-align: center; color: var(--royal-blue); font-size:1.3rem;"><i class="fas fa-history"></i> سجل نتائج الاختبارات 📊</h2>
         <div id="history-list" style="margin-top: 20px;"></div>
@@ -284,7 +289,6 @@
         <div class="bar-group">
             <span id="current-model-label" style="color: #38bdf8; font-weight: bold; font-size: 0.95rem; margin-left: 5px;">📁 نموذج جديد</span>
             
-            <!-- قائمة منسدلة ملونة للإجراءات الرئيسية -->
             <div class="styled-dropdown-wrapper" id="mainActionsDropdown">
                 <button type="button" class="dropdown-toggle-btn" onclick="toggleDropdown(event)">
                     <i class="fas fa-bars"></i> خيارات النماذج <i class="fas fa-chevron-down"></i>
@@ -366,14 +370,12 @@
         const fsDb = secondaryApp.firestore();
         const rtdb = firebase.database();
 
-        // تحكم بفتح وإغلاق القائمة المنسدلة الملونة
         function toggleDropdown(event) {
             event.stopPropagation();
             const wrapper = document.getElementById('mainActionsDropdown');
             wrapper.classList.toggle('active');
         }
 
-        // إغلاق القائمة المنسدلة عند النقر في أي مكان خارجها
         window.addEventListener('click', function() {
             const wrapper = document.getElementById('mainActionsDropdown');
             if (wrapper) wrapper.classList.remove('active');
@@ -528,9 +530,10 @@
                     leftHtml += `<div class="matching-row" data-subscore="${subScoreVal}">
                         ${!isStudent ? `<input type="text" class="opt opt-left" value="${item}" placeholder="فقرة ${idx+1}" oninput="saveAll()" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; text-align:right;">` : `<span style="flex:1;">${idx+1})${item}</span>`}
                         ${!isStudent ? `<input type="number" min="0.5" step="0.5" class="sub-score-input" value="${subScoreVal}" oninput="saveAll()" title="درجة هذه الفقرة">` : ``}
-                        <input type="text" class="matching-ans-input" data-left-idx="${idx}" ${isStudent ? 'oninput="this.closest(\'.question-card\').classList.remove(\'unanswered-alert\')"' : 'disabled placeholder="رقم الإجابة"'} value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;">
+                        <input type="text" class="matching-ans-input" data-left-idx="${idx}" ${isStudent ? `oninput="validateMatchingInput(this, ${rightOpts.length})"` : 'disabled placeholder="رقم الإجابة"'} value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" maxlength="2">
                     </div>`;
                 });
+                leftHtml += `<div class="matching-error-msg"></div>`;
                 if(!isStudent) {
                     leftHtml += `<div class="matching-controls" style="margin-top:10px; display:flex; gap:8px;">
                         <button type="button" class="btn" style="background:#3b82f6; padding:6px 12px; font-size:0.85rem;" onclick="adjustMatchingRows(this, 'left', 1)"><i class="fas fa-plus"></i> إضافة فقرة</button>
@@ -539,7 +542,7 @@
                 }
                 leftHtml += '</div>';
 
-                let rightHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الإجابات (العمود الثاني):</h4>`;
+                let rightHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الإجابات (العمود الثاني): مدعمة بـ (${rightOpts.length} إجابات متاحة)</h4>`;
                 rightOpts.forEach((item, idx) => {
                     rightHtml += `<div class="matching-row">
                         <span style="font-weight:bold; color:#0284c7; width:20px;">${idx+1}.</span>
@@ -600,6 +603,53 @@
                 }
                 return h + '</div>';
             }
+        }
+
+        function validateMatchingInput(inputEl, maxOptionsCount) {
+            const card = inputEl.closest('.question-card');
+            card.classList.remove('unanswered-alert');
+            const errorMsgEl = card.querySelector('.matching-error-msg');
+
+            // السماح فقط بالأرقام الإنجليزية (0-9)
+            let val = inputEl.value.replace(/[^0-9]/g, '');
+            inputEl.value = val;
+
+            if (val === '') {
+                if (errorMsgEl) errorMsgEl.style.display = 'none';
+                return;
+            }
+
+            let num = parseInt(val, 10);
+
+            // التحقق من أن الرقم لا يتجاوز عدد الإجابات المتاحة
+            if (num < 1 || num > maxOptionsCount) {
+                if (errorMsgEl) {
+                    errorMsgEl.innerText = `⚠️ عذراً، الرقم يجب أن يكون بين 1 و ${maxOptionsCount} فقط.`;
+                    errorMsgEl.style.display = 'block';
+                }
+                inputEl.value = '';
+                return;
+            }
+
+            // التحقق من عدم تكرار الرقم في نفس السؤال
+            let allInputs = card.querySelectorAll('.matching-ans-input');
+            let isDuplicate = false;
+            allInputs.forEach(inp => {
+                if (inp !== inputEl && inp.value.trim() === val) {
+                    isDuplicate = true;
+                }
+            });
+
+            if (isDuplicate) {
+                if (errorMsgEl) {
+                    errorMsgEl.innerText = `⚠️ الرقم (${val}) تم إدخاله مسبقاً في فقرة أخرى، لا يُسمح بالتكرار.`;
+                    errorMsgEl.style.display = 'block';
+                }
+                inputEl.value = '';
+                return;
+            }
+
+            if (errorMsgEl) errorMsgEl.style.display = 'none';
         }
 
         function adjustMatchingRows(btn, side, change) {
@@ -1348,20 +1398,4 @@
                 } else {
                     addQuestion();
                 }
-            } 
-        }
-
-        function clearAll() {
-            if(confirm("هل أنت متأكد من مسح جميع الأسئلة؟")) {
-                document.getElementById('quiz-content').innerHTML = '';
-                document.getElementById('arrayInputText').value = '';
-                localStorage.removeItem('fifi_final_v_secured');
-                currentOpenModelName = null;
-                document.getElementById('current-model-label').innerText = "📁 نموذج جديد";
             }
-        }
-
-        window.onload = function() { loadQuestions(); };
-    </script>
-</body>
-</html>
