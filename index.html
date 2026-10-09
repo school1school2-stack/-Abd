@@ -42,11 +42,22 @@
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; transition: background 0.5s; }
 
         .top-action-bar {
-            width: 100%; max-width: 850px; background: #1e293b; border-radius: 15px; padding: 12px 20px;
+            width: 100%; max-width: 850px; background: #1e293b; border-radius: 15px; padding: 14px 20px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 25px; box-sizing: border-box; gap: 10px; flex-wrap: wrap; z-index: 999;
+            margin-bottom: 25px; box-sizing: border-box; gap: 12px; flex-wrap: wrap; z-index: 999;
         }
-        .bar-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        /* تحسين مظهر وحجم الأيقونات داخل الأزرار */
+        .btn i {
+            font-size: 1.15rem;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        .btn-clear i {
+            font-size: 1.25rem;
+            margin-left: 0;
+        }
 
         .array-import-box, .search-result-box {
             width: 100%; max-width: 850px; background: var(--card-bg); border-radius: 15px; padding: 20px;
@@ -107,11 +118,12 @@
         .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; box-sizing: border-box; min-width: 200px; }
         .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; font-family: inherit; }
 
-        .btn { border: none; padding: 8px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-family: inherit; font-size: 0.85rem; white-space: nowrap; }
+        .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
         .btn-link { background: #06b6d4; } .btn-del { background: #ef4444; } .btn-rename { background: #f59e0b; }
         .btn-new { background: #10b981; }
-        .btn-clear { background: #64748b; padding: 8px; border-radius: 50%; }
+        .btn-clear { background: #64748b; padding: 10px; border-radius: 50%; width: 40px; height: 40px; }
 
         body.student-mode .top-action-bar, body.student-mode .array-import-box, body.student-mode .search-result-box, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only, body.student-mode .matching-controls, body.student-mode .enum-controls { display: none !important; }
         body.student-mode .selected-opt { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--royal-blue) !important; }
@@ -152,14 +164,14 @@
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-cloud"></i> النماذج المحفوظة في السحاب</h2>
         <p style="text-align: center; color: #64748b; font-size: 0.9rem;">اختر النموذج لفتحه أو حذفه:</p>
         <div id="cloud-models-list" style="margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;"></div>
-        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()">إغلاق</button>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
 
     <!-- نافذة سجل النتائج -->
     <div id="history-modal">
         <h2 style="text-align: center; color: var(--royal-blue); font-size:1.3rem;"><i class="fas fa-history"></i> سجل نتائج الاختبارات 📊</h2>
         <div id="history-list" style="margin-top: 20px;"></div>
-        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()">إغلاق السجل</button>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق السجل</button>
     </div>
 
     <div id="report-modal">
@@ -172,7 +184,7 @@
             <tbody id="report-body"></tbody>
         </table>
         <div id="save-review-btn-container" style="margin-top: 20px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
-        <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()">إغلاق التقرير</button>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق التقرير</button>
     </div>
 
     <div class="user-header" id="main-header">
@@ -199,12 +211,12 @@
 
     <div id="student-auth-container" style="display:none;">
         <div class="auth-card">
-            <h2 style="color: var(--royal-blue); margin-top: 0; font-size:1.4rem;">تسجيل دخول الطالب 🎓</h2>
+            <h2 style="color: var(--royal-blue); margin-top: 0; font-size:1.4rem;"><i class="fas fa-user-graduate"></i> تسجيل دخول الطالب 🎓</h2>
             <p style="color: #64748b; margin-bottom: 20px; font-size:0.95rem;">الرجاء إدخال إيميل منصة مدرستي المعتمد لبدء الاختبار:</p>
             <input type="email" id="studentEmailInput" class="auth-input" placeholder="sxxxxxxx@rb.moe.gov.sa">
             <br>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn" style="background: var(--success-green); padding: 12px 30px; font-size: 1.1rem;" onclick="verifyStudentEmail()">دخول المنصة 🚀</button>
+                <button class="btn" style="background: var(--success-green); padding: 12px 30px; font-size: 1.1rem;" onclick="verifyStudentEmail()"><i class="fas fa-rocket"></i> دخول المنصة 🚀</button>
                 <button class="btn" style="background: var(--royal-blue); padding: 12px 20px; font-size: 1rem;" onclick="openStudentHistory()"><i class="fas fa-history"></i> سجل اختباراتي 📊</button>
             </div>
             <p id="auth-status-msg" style="margin-top: 15px; font-weight: bold; font-size:0.95rem;"></p>
@@ -222,7 +234,7 @@
     <div class="array-import-box admin-only">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <label style="font-weight: bold; color: #0284c7; font-size:0.95rem;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية (تتحدث وتُحفظ تلقائياً):</label>
-            <button class="btn" style="background:#10b981; padding:4px 10px; font-size:0.75rem;" onclick="copyArrayCode()"><i class="fas fa-copy"></i> نسخ المصفوفة</button>
+            <button class="btn" style="background:#10b981; padding:6px 12px; font-size:0.8rem;" onclick="copyArrayCode()"><i class="fas fa-copy"></i> نسخ المصفوفة</button>
         </div>
         <textarea id="arrayInputText" class="array-textarea" placeholder="[ { t: '...', q: '...', ... } ]"></textarea>
         <button class="btn" style="background:#0284c7; width:100%; justify-content:center;" onclick="importArrayQuestions()"><i class="fas fa-magic"></i> توليد وتوزيع الأسئلة تلقائياً</button>
@@ -323,7 +335,7 @@
                         <option value="اذكر" ${selectedType === 'اذكر' ? 'selected' : ''}>اذكر</option>
                         <option value="صحح الخطأ" ${selectedType === 'صحح الخطأ' ? 'selected' : ''}>صحح الخطأ</option>
                     </select>
-                    <i class="fas fa-times-circle remove-btn" style="color:#cbd5e1; cursor:pointer; font-size:1.2rem;" onclick="this.closest('.question-card').remove();updateNumbers();saveAll();"></i>
+                    <i class="fas fa-times-circle remove-btn" style="color:#cbd5e1; cursor:pointer; font-size:1.3rem;" onclick="this.closest('.question-card').remove();updateNumbers();saveAll();"></i>
                 </div>
                 <div class="q-area">
                     ${selectedType === 'استخرج من النص' ? `<div class="estieab-box" ${isStudent ? 'contenteditable="false"' : 'contenteditable="true" oninput="saveAll()"'}>${qTextAreaVal || "أدخل النص المراد الاستخراج منه هنا..."}</div>` : ''}
@@ -412,8 +424,8 @@
                 });
                 if(!isStudent) {
                     leftHtml += `<div class="matching-controls" style="margin-top:10px; display:flex; gap:8px;">
-                        <button type="button" class="btn" style="background:#3b82f6; padding:4px 10px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'left', 1)">+ إضافة فقرة</button>
-                        <button type="button" class="btn" style="background:#ef4444; padding:4px 10px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'left', -1)">- حذف فقرة</button>
+                        <button type="button" class="btn" style="background:#3b82f6; padding:6px 12px; font-size:0.85rem;" onclick="adjustMatchingRows(this, 'left', 1)"><i class="fas fa-plus"></i> إضافة فقرة</button>
+                        <button type="button" class="btn" style="background:#ef4444; padding:6px 12px; font-size:0.85rem;" onclick="adjustMatchingRows(this, 'left', -1)"><i class="fas fa-minus"></i> حذف فقرة</button>
                     </div>`;
                 }
                 leftHtml += '</div>';
@@ -427,8 +439,8 @@
                 });
                 if(!isStudent) {
                     rightHtml += `<div class="matching-controls" style="margin-top:10px; display:flex; gap:8px;">
-                        <button type="button" class="btn" style="background:#3b82f6; padding:4px 10px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'right', 1)">+ إضافة إجابة</button>
-                        <button type="button" class="btn" style="background:#ef4444; padding:4px 10px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'right', -1)">- حذف إجابة</button>
+                        <button type="button" class="btn" style="background:#3b82f6; padding:6px 12px; font-size:0.85rem;" onclick="adjustMatchingRows(this, 'right', 1)"><i class="fas fa-plus"></i> إضافة إجابة</button>
+                        <button type="button" class="btn" style="background:#ef4444; padding:6px 12px; font-size:0.85rem;" onclick="adjustMatchingRows(this, 'right', -1)"><i class="fas fa-minus"></i> حذف إجابة</button>
                     </div>`;
                 }
                 rightHtml += '</div>';
@@ -455,8 +467,8 @@
 
                 if(!isStudent) {
                     html += `<div class="enum-controls" style="margin-top:10px; display:flex; gap:8px;">
-                        <button type="button" class="btn" style="background:#3b82f6; padding:4px 10px; font-size:0.8rem;" onclick="adjustEnumRows(this, 1)">+ إضافة عنصر تعداد</button>
-                        <button type="button" class="btn" style="background:#ef4444; padding:4px 10px; font-size:0.8rem;" onclick="adjustEnumRows(this, -1)">- حذف عنصر</button>
+                        <button type="button" class="btn" style="background:#3b82f6; padding:6px 12px; font-size:0.85rem;" onclick="adjustEnumRows(this, 1)"><i class="fas fa-plus"></i> إضافة عنصر تعداد</button>
+                        <button type="button" class="btn" style="background:#ef4444; padding:6px 12px; font-size:0.85rem;" onclick="adjustEnumRows(this, -1)"><i class="fas fa-minus"></i> حذف عنصر</button>
                     </div>`;
                 }
                 html += `</div>`;
