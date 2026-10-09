@@ -48,7 +48,98 @@
         }
         .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-        /* تحسين مظهر وحجم الأيقونات داخل الأزرار */
+        /* تصميم القائمة المنسدلة الملونة بالأيقونات المتناسقة */
+        .styled-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+        .dropdown-toggle-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .dropdown-toggle-btn i:first-child { font-size: 1.15rem; }
+        .dropdown-toggle-btn .fa-chevron-down { font-size: 0.75rem; transition: transform 0.3s; margin-right: 4px; }
+        
+        .styled-dropdown-wrapper.active .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: #1e293b;
+            min-width: 200px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            border-radius: 12px;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeInMenu 0.2s ease;
+        }
+
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-menu-content button {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 11px 16px;
+            text-align: right;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu-content button i {
+            font-size: 1.15rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-menu-content button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu-content button.menu-item-new { color: #10b981; }
+        .dropdown-menu-content button.menu-item-save { color: #a855f7; }
+        .dropdown-menu-content button.menu-item-link { color: #06b6d4; }
+        .dropdown-menu-content button.menu-item-rename { color: #f59e0b; }
+        .dropdown-menu-content button.menu-item-del { color: #ef4444; }
+        .dropdown-menu-content button.menu-item-load { color: #818cf8; }
+        .dropdown-menu-content button.menu-item-add { color: #3b82f6; }
+
+        .styled-dropdown-wrapper.active .dropdown-menu-content {
+            display: block;
+        }
+
+        /* تحسين مظهر الأيقونات داخل الأزرار العادية الأخرى */
         .btn i {
             font-size: 1.15rem;
             margin-left: 4px;
@@ -58,6 +149,9 @@
             font-size: 1.25rem;
             margin-left: 0;
         }
+        .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-clear { background: #64748b; padding: 10px; border-radius: 50%; width: 40px; height: 40px; }
 
         .array-import-box, .search-result-box {
             width: 100%; max-width: 850px; background: var(--card-bg); border-radius: 15px; padding: 20px;
@@ -117,13 +211,6 @@
         .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; box-sizing: border-box; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
         .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; box-sizing: border-box; min-width: 200px; }
         .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; font-family: inherit; }
-
-        .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-add { background: #3b82f6; } .btn-save { background: #a855f7; } .btn-load { background: #4f46e5; }
-        .btn-link { background: #06b6d4; } .btn-del { background: #ef4444; } .btn-rename { background: #f59e0b; }
-        .btn-new { background: #10b981; }
-        .btn-clear { background: #64748b; padding: 10px; border-radius: 50%; width: 40px; height: 40px; }
 
         body.student-mode .top-action-bar, body.student-mode .array-import-box, body.student-mode .search-result-box, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only, body.student-mode .matching-controls, body.student-mode .enum-controls { display: none !important; }
         body.student-mode .selected-opt { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--royal-blue) !important; }
@@ -196,15 +283,24 @@
     <div class="top-action-bar admin-only" id="admin-top-bar">
         <div class="bar-group">
             <span id="current-model-label" style="color: #38bdf8; font-weight: bold; font-size: 0.95rem; margin-left: 5px;">📁 نموذج جديد</span>
-            <button class="btn btn-new" onclick="startNewModel()"><i class="fas fa-plus-circle"></i> قبل أبدأ (جديد)</button>
-            <button class="btn btn-save" onclick="saveToCloud()"><i class="fas fa-save"></i> حفظ</button>
-            <button class="btn btn-link" onclick="copyCurrentModelLink()"><i class="fas fa-link"></i> رابط الطلاب</button>
-            <button class="btn btn-rename" onclick="renameCurrentModel()"><i class="fas fa-signature"></i> إعادة تسمية</button>
-            <button class="btn btn-del" onclick="deleteCurrentModel()"><i class="fas fa-trash"></i> حذف</button>
+            
+            <!-- قائمة منسدلة ملونة للإجراءات الرئيسية -->
+            <div class="styled-dropdown-wrapper" id="mainActionsDropdown">
+                <button type="button" class="dropdown-toggle-btn" onclick="toggleDropdown(event)">
+                    <i class="fas fa-bars"></i> خيارات النماذج <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu-content">
+                    <button type="button" class="menu-item-new" onclick="startNewModel()"><i class="fas fa-plus-circle"></i> قبل أبدأ (جديد)</button>
+                    <button type="button" class="menu-item-save" onclick="saveToCloud()"><i class="fas fa-save"></i> حفظ النموذج</button>
+                    <button type="button" class="menu-item-link" onclick="copyCurrentModelLink()"><i class="fas fa-link"></i> رابط الطلاب</button>
+                    <button type="button" class="menu-item-rename" onclick="renameCurrentModel()"><i class="fas fa-signature"></i> إعادة تسمية</button>
+                    <button type="button" class="menu-item-del" onclick="deleteCurrentModel()"><i class="fas fa-trash"></i> حذف النموذج</button>
+                </div>
+            </div>
         </div>
         <div class="bar-group">
-            <button class="btn btn-load" onclick="loadFromCloud()"><i class="fas fa-folder-open"></i> فتح نموذج</button>
-            <button class="btn btn-add" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
+            <button class="btn" style="background: #4f46e5;" onclick="loadFromCloud()"><i class="fas fa-folder-open"></i> فتح نموذج</button>
+            <button class="btn" style="background: #3b82f6;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
             <button class="btn btn-clear" title="مسح الكل" onclick="clearAll()"><i class="fas fa-eraser"></i></button>
         </div>
     </div>
@@ -269,6 +365,19 @@
         const secondaryApp = firebase.apps.length > 1 ? firebase.apps[1] : firebase.initializeApp(firestoreConfig, "secondary");
         const fsDb = secondaryApp.firestore();
         const rtdb = firebase.database();
+
+        // تحكم بفتح وإغلاق القائمة المنسدلة الملونة
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const wrapper = document.getElementById('mainActionsDropdown');
+            wrapper.classList.toggle('active');
+        }
+
+        // إغلاق القائمة المنسدلة عند النقر في أي مكان خارجها
+        window.addEventListener('click', function() {
+            const wrapper = document.getElementById('mainActionsDropdown');
+            if (wrapper) wrapper.classList.remove('active');
+        });
 
         function autoResizeTextarea(el) {
             el.style.height = 'auto';
@@ -417,7 +526,7 @@
                     let sVal = studentAns[idx] || '';
                     let subScoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
                     leftHtml += `<div class="matching-row" data-subscore="${subScoreVal}">
-                        ${!isStudent ? `<input type="text" class="opt opt-left" value="${item}" placeholder="فقرة ${idx+1}" oninput="saveAll()" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; text-align:right;">` : `<span style="flex:1;">${idx+1}) ${item}</span>`}
+                        ${!isStudent ? `<input type="text" class="opt opt-left" value="${item}" placeholder="فقرة ${idx+1}" oninput="saveAll()" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; text-align:right;">` : `<span style="flex:1;">${idx+1})${item}</span>`}
                         ${!isStudent ? `<input type="number" min="0.5" step="0.5" class="sub-score-input" value="${subScoreVal}" oninput="saveAll()" title="درجة هذه الفقرة">` : ``}
                         <input type="text" class="matching-ans-input" data-left-idx="${idx}" ${isStudent ? 'oninput="this.closest(\'.question-card\').classList.remove(\'unanswered-alert\')"' : 'disabled placeholder="رقم الإجابة"'} value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;">
                     </div>`;
@@ -710,7 +819,7 @@
 
                     itemDiv.innerHTML = `
                         <div style="font-weight:bold; color:var(--royal-blue); text-align:right; flex:1; font-size:0.95rem;">طالب: ${data.name || 'مجهول'} | نموذج: ${data.model_id || 'اختبار'} | النتيجة: ${data.score} من ${data.total}</div>
-                        <button class="btn btn-save" style="padding:6px 12px;" onclick='${actionFunc}'>${btnText}</button>
+                        <button class="btn" style="background:#a855f7; padding:6px 12px;" onclick='${actionFunc}'>${btnText}</button>
                     `;
                     containerDiv.appendChild(itemDiv);
                 });
@@ -1030,8 +1139,8 @@
                         itemDiv.innerHTML = `
                             <div style="font-weight:bold; color:var(--royal-blue); text-align:right; flex:1; min-width:120px;">${name}</div>
                             <div style="display:flex; gap:6px;">
-                                <button class="btn btn-save" style="padding:6px 12px;" onclick="openModel('${name}')"><i class="fas fa-folder-open"></i> فتح</button>
-                                <button class="btn btn-del" style="padding:6px 12px;" onclick="deleteSpecificModel('${name}')"><i class="fas fa-trash"></i> حذف</button>
+                                <button class="btn" style="background:#a855f7; padding:6px 12px;" onclick="openModel('${name}')"><i class="fas fa-folder-open"></i> فتح</button>
+                                <button class="btn" style="background:#ef4444; padding:6px 12px;" onclick="deleteSpecificModel('${name}')"><i class="fas fa-trash"></i> حذف</button>
                             </div>
                         `;
                         listContainer.appendChild(itemDiv);
