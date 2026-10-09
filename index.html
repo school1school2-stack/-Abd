@@ -407,8 +407,18 @@
             return array;
         }
 
-        function formatStudentAnswerDisplay(ansVal) {
+        function formatStudentAnswerDisplay(ansVal, qType) {
             if (!ansVal) return '--';
+            if (qType && qType.includes('مزاوجة')) {
+                if (typeof ansVal === 'object') {
+                    let parts = [];
+                    Object.keys(ansVal).sort((a,b)=>a-b).forEach(k => {
+                        parts.push(ansVal[k]);
+                    });
+                    return parts.join(' ');
+                }
+                return ansVal;
+            }
             if (typeof ansVal === 'object') {
                 let parts = [];
                 Object.keys(ansVal).sort((a,b)=>a-b).forEach(k => {
@@ -898,18 +908,18 @@
             report.innerHTML = "";
 
             answersArray.forEach((ans, i) => {
-                let formattedAns = (ans.qType?.includes('مزاوجة') || ans.qType?.includes('عددّد')) ? formatStudentAnswerDisplay(ans.studentAns) : (ans.studentAns || '--');
+                let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                 let earned = ans.earnedScore !== undefined ? ans.earnedScore : (ans.gotScore !== undefined ? ans.gotScore : (ans.isCorrect ? ans.maxScore : 0));
                 
                 let correctDisplay = ans.correctAns || 'إجابة تحريرية';
-                if (ans.qType?.includes('مزاوجة')) correctDisplay = `مفتاح الترتيب: ${ans.correctAns}`;
+                if (ans.qType?.includes('مزاوجة')) correctDisplay = ans.correctAns;
 
                 report.innerHTML += `<tr>
                     <td>${i+1}</td>
                     <td style="text-align:right">${ans.qText || ans.q || ''}</td>
                     <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${ans.qType || 'سؤال'}</span></td>
-                    <td style="text-align:right">${formattedAns}</td>
-                    <td style="color:var(--success-green); font-weight:bold">${correctDisplay}</td>
+                    <td style="font-weight:bold; direction:ltr;">${formattedAns}</td>
+                    <td style="color:var(--success-green); font-weight:bold; direction:ltr;">${correctDisplay}</td>
                     <td>${earned} من ${ans.maxScore}</td>
                 </tr>`;
             });
@@ -931,18 +941,18 @@
             answersArray.forEach((ans, i) => {
                 const maxS = ans.maxScore || 1;
                 const earnedS = ans.earnedScore !== undefined ? ans.earnedScore : (ans.gotScore !== undefined ? ans.gotScore : (ans.isCorrect ? maxS : 0));
-                let formattedAns = (ans.qType?.includes('مزاوجة') || ans.qType?.includes('عددّد')) ? formatStudentAnswerDisplay(ans.studentAns) : (ans.studentAns || '--');
+                let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                 
                 let correctDisplay = ans.correctAns || 'تعديل يدوي';
-                if (ans.qType?.includes('مزاوجة')) correctDisplay = `مفتاح الترتيب: ${ans.correctAns}`;
+                if (ans.qType?.includes('مزاوجة')) correctDisplay = ans.correctAns;
 
                 report.innerHTML += `
                     <tr>
                         <td>${i+1}</td>
                         <td style="text-align:right">${ans.qText || ans.q || ''}</td>
                         <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${ans.qType || 'سؤال'}</span></td>
-                        <td style="text-align:right">${formattedAns}</td>
-                        <td style="color:var(--success-green); font-weight:bold">${correctDisplay}</td>
+                        <td style="font-weight:bold; direction:ltr;">${formattedAns}</td>
+                        <td style="color:var(--success-green); font-weight:bold; direction:ltr;">${correctDisplay}</td>
                         <td>
                             <input type="number" step="0.5" min="0" max="${maxS}" class="score-edit-input" data-index="${i}" value="${earnedS}" style="width:55px; text-align:center; padding:4px; border-radius:6px; font-weight:bold; font-family:inherit;"> (من ${maxS})
                         </td>
