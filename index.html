@@ -409,13 +409,13 @@
 
         function formatStudentAnswerDisplay(ansVal, qType) {
             if (!ansVal) return '--';
-            if (qType && qType.includes('مزاوجة')) {
+            if (qType && (qType.includes('مزاوجة') || qType.includes('عددّد'))) {
                 if (typeof ansVal === 'object') {
                     let parts = [];
                     Object.keys(ansVal).sort((a,b)=>a-b).forEach(k => {
                         parts.push(ansVal[k]);
                     });
-                    return parts.join(' ');
+                    return parts.join(' | ');
                 }
                 return ansVal;
             }
@@ -448,6 +448,34 @@
                 htmlParts.push(`<span style="color: ${color}; font-weight: bold;">${sVal || '--'}</span>`);
             }
             return htmlParts.join(' ');
+        }
+
+        function getColoredEnumHtml(studentAns, optLabels) {
+            let studentArr = [];
+            if (typeof studentAns === 'object' && studentAns !== null) {
+                let keys = Object.keys(studentAns).sort((a,b)=>a-b);
+                keys.forEach(k => studentArr.push(studentAns[k] || ''));
+            } else if (typeof studentAns === 'string') {
+                studentArr = studentAns.trim().split(/\s+/);
+            }
+            
+            let htmlParts = [];
+            for (let i = 0; i < studentArr.length; i++) {
+                let sVal = studentArr[i] || '';
+                let targetKey = (optLabels && optLabels[i] ? optLabels[i] : '').trim().toLowerCase();
+                let studentValLower = sVal.trim().toLowerCase();
+
+                let isMatch = false;
+                if (studentValLower !== '') {
+                    if (targetKey !== '' && (studentValLower.includes(targetKey) || targetKey.includes(studentValLower))) {
+                        isMatch = true;
+                    }
+                }
+
+                let color = isMatch ? 'var(--success-green)' : 'var(--q-red)';
+                htmlParts.push(`<span style="color: ${color}; font-weight: bold;">${sVal || '--'}</span>`);
+            }
+            return htmlParts.join(' | ');
         }
 
         function startNewModel() {
@@ -936,6 +964,9 @@
                 if (ans.qType?.includes('مزاوجة')) {
                     correctDisplay = ans.correctAns ? ans.correctAns.replace(/\s+/g, ' ').trim() : '';
                     studentAnswerHtml = getColoredMatchingHtml(ans.studentAns, ans.correctAns);
+                } else if (ans.qType?.includes('عددّد')) {
+                    correctDisplay = 'عناصر التعداد المحددة';
+                    studentAnswerHtml = getColoredEnumHtml(ans.studentAns, ans.opts);
                 } else {
                     let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                     let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
@@ -978,6 +1009,9 @@
                 if (ans.qType?.includes('مزاوجة')) {
                     correctDisplay = ans.correctAns ? ans.correctAns.replace(/\s+/g, ' ').trim() : '';
                     studentAnswerHtml = getColoredMatchingHtml(ans.studentAns, ans.correctAns);
+                } else if (ans.qType?.includes('عددّد')) {
+                    correctDisplay = 'عناصر التعداد المحددة';
+                    studentAnswerHtml = getColoredEnumHtml(ans.studentAns, ans.opts);
                 } else {
                     let formattedAns = formatStudentAnswerDisplay(ans.studentAns, ans.qType);
                     let cleanFormattedAns = formattedAns.replace(/\s+/g, ' ').trim();
