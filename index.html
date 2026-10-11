@@ -349,6 +349,8 @@
     <div id="student-auth-container" style="display:none;">
         <div class="auth-card">
             <h2 style="color: var(--royal-blue); margin-top: 0; font-size:1.4rem;"><i class="fas fa-user-graduate"></i> تسجيل دخول الطالب 🎓</h2>
+            <!-- عنصر ظهور اسم الاختبار للطالب عند فتح الرابط -->
+            <div id="student-exam-title-badge" style="background: #e0f2fe; color: #0369a1; padding: 10px 15px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border: 1px solid #bae6fd; display: none;"></div>
             <p style="color: #64748b; margin-bottom: 20px; font-size:0.95rem;">الرجاء إدخال إيميل منصة مدرستي المعتمد لبدء الاختبار:</p>
             <input type="email" id="studentEmailInput" class="auth-input" placeholder="sxxxxxxx@rb.moe.gov.sa">
             <br>
@@ -1546,12 +1548,10 @@
                 date: new Date().toLocaleString()
             };
 
-            // حفظ محلي مضمون 100%
             let savedModels = JSON.parse(localStorage.getItem('fifi_all_saved_models') || '{}');
             savedModels[currentOpenModelName] = modelPackage;
             localStorage.setItem('fifi_all_saved_models', JSON.stringify(savedModels));
 
-            // محاولة الحفظ في السحاب أيضاً
             try {
                 await rtdb.ref('models/' + currentOpenModelName).set(modelPackage);
             } catch(e) {}
@@ -1651,6 +1651,13 @@
             if (id) { 
                 document.body.classList.add('student-mode'); 
                 document.getElementById('student-auth-container').style.display = 'block';
+
+                // إظهار اسم الاختبار للطالب في صفحة تسجيل الدخول
+                const titleBadge = document.getElementById('student-exam-title-badge');
+                if (titleBadge) {
+                    titleBadge.innerText = `📄 اختبار: ${id}`;
+                    titleBadge.style.display = 'block';
+                }
 
                 let savedModels = JSON.parse(localStorage.getItem('fifi_all_saved_models') || '{}');
                 if (savedModels[id]) {
