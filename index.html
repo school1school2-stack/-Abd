@@ -179,6 +179,14 @@
         .auth-input { width: 80%; max-width: 400px; padding: 15px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; box-sizing: border-box; }
 
         .container { width: 100%; max-width: 850px; padding-bottom: 120px; display: none; box-sizing: border-box; }
+        
+        /* شريط الوقت التنازلي للطالب داخل الاختبار */
+        .exam-timer-banner {
+            width: 100%; max-width: 850px; background: #1e293b; color: #38bdf8; border-radius: 12px;
+            padding: 12px 20px; margin-bottom: 20px; display: none; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-weight: bold; box-sizing: border-box; flex-wrap: wrap; gap: 10px;
+        }
+
         .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; transition: 0.3s, background 0.5s; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; transition: background 0.5s; }
         
@@ -349,7 +357,6 @@
     <div id="student-auth-container" style="display:none;">
         <div class="auth-card">
             <h2 style="color: var(--royal-blue); margin-top: 0; font-size:1.4rem;"><i class="fas fa-user-graduate"></i> تسجيل دخول الطالب 🎓</h2>
-            <!-- عنصر ظهور اسم الاختبار للطالب عند فتح الرابط -->
             <div id="student-exam-title-badge" style="background: #e0f2fe; color: #0369a1; padding: 10px 15px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border: 1px solid #bae6fd; display: none;"></div>
             <p style="color: #64748b; margin-bottom: 20px; font-size:0.95rem;">الرجاء إدخال إيميل منصة مدرستي المعتمد لبدء الاختبار:</p>
             <input type="email" id="studentEmailInput" class="auth-input" placeholder="sxxxxxxx@rb.moe.gov.sa">
@@ -379,6 +386,12 @@
         <button class="btn" style="background:#0284c7; width:100%; justify-content:center;" onclick="importArrayQuestions()"><i class="fas fa-magic"></i> توليد وتوزيع الأسئلة تلقائياً</button>
     </div>
 
+    <!-- شريط الوقت التنازلي داخل الاختبار للطالب -->
+    <div id="examTimerBanner" class="exam-timer-banner">
+        <div id="bannerExamTitle"><i class="fas fa-file-alt"></i> الاختبار: --</div>
+        <div id="bannerTimeCountdown" style="color: #f59e0b;"><i class="fas fa-hourglass-half"></i> الوقت المتبقي: جاري الحساب...</div>
+    </div>
+
     <div class="container" id="quiz-content"></div>
 
     <div id="student-actions" style="display: none; text-align: center; margin-bottom: 50px; gap: 10px; justify-content: center; flex-wrap: wrap;">
@@ -393,6 +406,7 @@
         let currentOpenModelName = null;
         let currentExamStartTime = "";
         let currentExamEndTime = "";
+        let examTimerInterval = null;
 
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
@@ -466,6 +480,39 @@
                 alert("تم حفظ توقيت الاختبار بنجاح! ⏰");
             }
             closeModals();
+        }
+
+        function startStudentCountdownTimer() {
+            if (!currentExamEndTime) {
+                document.getElementById('bannerTimeCountdown').innerText = "⏳ وقت الاختبار مفتوح (بدون موعد إغلاق محدد)";
+                return;
+            }
+
+            const endTimeMs = new Date(currentExamEndTime).getTime();
+
+            if (examTimerInterval) clearInterval(examTimerInterval);
+
+            examTimerInterval = setInterval(() => {
+                const nowMs = new Date().getTime();
+                const distance = endTimeMs - nowMs;
+
+                if (distance < 0) {
+                    clearInterval(examTimerInterval);
+                    document.getElementById('bannerTimeCountdown').innerHTML = "⌛ انتهى وقت الاختبار!";
+                    alert("انتهى وقت الاختبار المحدد!");
+                    return;
+                }
+
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                let timeString = "";
+                if (hours > 0) timeString += `${hours} ساعة و `;
+                timeString += `${minutes} دقيقة و ${seconds} ثانية`;
+
+                document.getElementById('bannerTimeCountdown').innerHTML = `<i class="fas fa-hourglass-half"></i> الوقت المتبقي: ${timeString}`;
+            }, 1000);
         }
 
         function formatStudentAnswerDisplay(ansVal, qType) {
@@ -954,6 +1001,14 @@
                 document.querySelector('.container').style.display = 'block';
                 document.getElementById('student-actions').style.display = 'flex';
 
+                // إظهار شريط الوقت والتاريخ المتبقي للطالب
+                const timerBanner = document.getElementById('examTimerBanner');
+                if (timerBanner) {
+                    document.getElementById('bannerExamTitle').innerHTML = `<i class="fas fa-file-alt"></i> الاختبار: ${examId}`;
+                    timerBanner.style.display = 'flex';
+                    startStudentCountdownTimer();
+                }
+
                 alert(`أهلاً بك يا ${authenticatedStudentName} 🌟. يمكنك البدء في حل الاختبار.`);
             } catch (err) {
                 console.error(err);
@@ -1173,6 +1228,8 @@
         }
 
         async function gradeExam() {
+            if (examTimerInterval) clearInterval(examTimerInterval);
+
             const cards = document.querySelectorAll('.question-card');
             let firstUnansweredIndex = -1;
 
@@ -1343,6 +1400,7 @@
                 });
 
                 localStorage.setItem('submitted_' + examId, 'true');
+                document.getElementById('examTimerBanner').style.display = 'none';
                 document.getElementById('student-actions').innerHTML = `
                     <div style="background:#dcfce7; color:#166534; padding:20px; border-radius:12px; font-weight:bold; border:1px solid #bbf7d0; width:100%; text-align:center; font-size: 1.1rem;">
                         🎉 تم إرسال واعتماد النتيجة بنجاح!<br>
@@ -1652,7 +1710,6 @@
                 document.body.classList.add('student-mode'); 
                 document.getElementById('student-auth-container').style.display = 'block';
 
-                // إظهار اسم الاختبار للطالب في صفحة تسجيل الدخول
                 const titleBadge = document.getElementById('student-exam-title-badge');
                 if (titleBadge) {
                     titleBadge.innerText = `📄 اختبار: ${id}`;
