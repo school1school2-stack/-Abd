@@ -901,7 +901,6 @@
                 return;
             }
 
-            // التحقق من التوقيت المحدد للاختبار
             const now = new Date();
             if (currentExamStartTime && new Date(currentExamStartTime) > now) {
                 msgEl.style.color = "var(--q-red)";
